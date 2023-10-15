@@ -1,0 +1,64 @@
+name: build-and-test-cabal-package
+description:
+
+inputs:
+  ghc:
+    type: string
+    default: latest
+    required: false
+  ghc-options:
+    type: string
+    default:
+      -Werror -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wredundant-constraints -Wunused-packages -Wno-name-shadowing -Wno-unused-matches -Wno-unused-do-bind -Wno-type-defaults
+    required: false
+
+runs:
+  using: composite
+  steps:
+
+      - uses: actions/checkout@v3
+
+      - name: Set up GHC ${{ inputs.ghc }}
+        id: setup
+        uses: haskell-actions/setup@v2
+        with:
+          ghc-version: ${{ inputs.ghc }}
+
+      - name: Check cabal file
+        run: cabal check
+
+      - name: Configure the build
+        run: |
+          cabal configure --enable-tests --enable-benchmarks --enable-documentation
+          cabal build --dry-run
+
+      - name: Restore cached dependencies
+        uses: actions/cache/restore@v3
+        id: cache
+        env:
+          key: ${{ runner.os }}-ghc-${{ steps.setup.outputs.ghc-version }}-cabal-${{ steps.setup.outputs.cabal-version }}
+        with:
+          path: ${{ steps.setup.outputs.cabal-store }}
+          key: ${{ env.key }}-plan-${{ hashFiles('**/plan.json') }}
+          restore-keys: ${{ env.key }}-
+          
+      - name: Install dependencies
+        run: cabal build all --only-dependencies --enable-tests --enable-benchmarks --enable-documentation -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
+
+      - name: Save dependencies cache
+        uses: actions/cache/save@v3
+        if: ${{ steps.cache.outputs.cache-primary-key != steps.cache.outputs.cache-matched-key }}
+        with:
+          path: ${{ steps.setup.outputs.cabal-store }}
+          key: ${{ steps.cache.outputs.cache-primary-key }}
+
+      - name: Build
+        run: cabal build all --enable-tests --enable-benchmarks -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
+
+      - name: Test
+        run: cabal test all --test-show-details streaming -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
+
+      - name: Build docs
+        run: cabal haddock -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
+
+  
