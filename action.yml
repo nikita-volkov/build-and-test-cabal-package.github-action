@@ -21,9 +21,11 @@ runs:
           ghc-version: ${{ inputs.ghc }}
 
       - name: Check cabal file
+        shell: bash
         run: cabal check
 
       - name: Configure the build
+        shell: bash
         run: |
           cabal configure --enable-tests --enable-benchmarks --enable-documentation
           cabal build --dry-run
@@ -39,6 +41,7 @@ runs:
           restore-keys: ${{ env.key }}-
           
       - name: Install dependencies
+        shell: bash
         run: cabal build all --only-dependencies --enable-tests --enable-benchmarks --enable-documentation -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
 
       - name: Save dependencies cache
@@ -49,12 +52,15 @@ runs:
           key: ${{ steps.cache.outputs.cache-primary-key }}
 
       - name: Build
+        shell: bash
         run: cabal build all --enable-tests --enable-benchmarks -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
 
       - name: Test
+        shell: bash
         run: cabal test all --test-show-details streaming -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
 
       - name: Build docs
+        shell: bash
         run: cabal haddock -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
 
   
