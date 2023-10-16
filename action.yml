@@ -3,14 +3,10 @@ description:
 
 inputs:
   ghc:
-    type: string
     default: latest
-    required: false
   ghc-options:
-    type: string
     default:
       -Werror -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wredundant-constraints -Wunused-packages -Wno-name-shadowing -Wno-unused-matches -Wno-unused-do-bind -Wno-type-defaults
-    required: false
 
 runs:
   using: composite
