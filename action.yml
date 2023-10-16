@@ -7,6 +7,8 @@ inputs:
   ghc-options:
     default:
       -Werror -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wredundant-constraints -Wunused-packages -Wno-name-shadowing -Wno-unused-matches -Wno-unused-do-bind -Wno-type-defaults
+  ignore-haddock:
+    default: false
 
 runs:
   using: composite
@@ -60,6 +62,7 @@ runs:
         run: cabal test all --test-show-details streaming -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
 
       - name: Build docs
+        if: ${{ inputs.ignore-haddock }}
         shell: bash
         run: cabal haddock -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
 
