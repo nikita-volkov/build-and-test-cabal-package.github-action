@@ -62,7 +62,7 @@ runs:
         run: cabal test all --test-show-details streaming -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
 
       - name: Build docs
-        if: ${{ inputs.ignore-haddock }} == 'true'
+        if: ${{ inputs.ignore-haddock != 'true' }}
         shell: bash
         run: cabal haddock -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
 
