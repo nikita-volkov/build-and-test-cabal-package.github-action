@@ -9,6 +9,8 @@ inputs:
       -Werror -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wredundant-constraints -Wunused-packages -Wno-name-shadowing -Wno-unused-matches -Wno-unused-do-bind -Wno-type-defaults
   ignore-haddock:
     default: false
+  ignore-cabal-check:
+    default: false
 
 runs:
   using: composite
@@ -23,6 +25,7 @@ runs:
           ghc-version: ${{ inputs.ghc }}
 
       - name: Check cabal file
+        if: ${{ inputs.ignore-cabal-check != 'true' }}
         shell: bash
         run: cabal check
 
