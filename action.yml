@@ -8,9 +8,9 @@ inputs:
     default:
       -Werror -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wredundant-constraints -Wunused-packages -Wno-name-shadowing -Wno-unused-matches -Wno-unused-do-bind -Wno-type-defaults
   ignore-haddock:
-    default: false
+    default: "false"
   ignore-cabal-check:
-    default: false
+    default: "false"
 
 runs:
   using: composite
