@@ -11,6 +11,8 @@ inputs:
     default: "false"
   ignore-cabal-check:
     default: "false"
+  ignore-tests:
+    default: "false"
 
 runs:
   using: composite
@@ -32,7 +34,7 @@ runs:
       - name: Configure the build
         shell: bash
         run: |
-          cabal configure --enable-tests --enable-benchmarks${{ inputs.ignore-haddock != 'true' && ' --enable-documentation' || ''}}
+          cabal configure${{ inputs.ignore-tests != 'true' && ' --enable-tests --enable-benchmarks' || ''}}${{ inputs.ignore-haddock != 'true' && ' --enable-documentation' || ''}}
           cabal build --dry-run
 
       - name: Restore cached dependencies
@@ -47,7 +49,7 @@ runs:
           
       - name: Install dependencies
         shell: bash
-        run: cabal build all --only-dependencies --enable-tests --enable-benchmarks${{ inputs.ignore-haddock != 'true' && ' --enable-documentation' || ''}} -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
+        run: cabal build all --only-dependencies${{ inputs.ignore-tests != 'true' && ' --enable-tests --enable-benchmarks' || ''}}${{ inputs.ignore-haddock != 'true' && ' --enable-documentation' || ''}} -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
 
       - name: Save dependencies cache
         uses: actions/cache/save@v3
@@ -58,9 +60,10 @@ runs:
 
       - name: Build
         shell: bash
-        run: cabal build all --enable-tests --enable-benchmarks -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
+        run: cabal build all${{ inputs.ignore-tests != 'true' && ' --enable-tests --enable-benchmarks' || ''}} -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
 
       - name: Test
+        if: ${{ inputs.ignore-tests != 'true' }}
         shell: bash
         run: cabal test all --test-show-details streaming -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
 
