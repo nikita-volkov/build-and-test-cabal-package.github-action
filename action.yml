@@ -26,11 +26,6 @@ runs:
         with:
           ghc-version: ${{ inputs.ghc }}
 
-      - name: Check cabal file
-        if: ${{ inputs.ignore-cabal-check != 'true' }}
-        shell: bash
-        run: cabal check
-
       - name: Configure the build
         shell: bash
         run: |
@@ -57,6 +52,11 @@ runs:
         with:
           path: ${{ steps.setup.outputs.cabal-store }}
           key: ${{ steps.cache.outputs.cache-primary-key }}
+
+      - name: Check cabal file
+        if: ${{ inputs.ignore-cabal-check != 'true' }}
+        shell: bash
+        run: cabal check
 
       - name: Build
         shell: bash
