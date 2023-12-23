@@ -30,7 +30,7 @@ runs:
         shell: bash
         run: |
           cabal configure${{ inputs.ignore-tests != 'true' && ' --enable-tests --enable-benchmarks' || ''}}${{ inputs.ignore-haddock != 'true' && ' --enable-documentation' || ''}}
-          cabal build --dry-run
+          cabal build all --dry-run
 
       - name: Restore cached dependencies
         uses: actions/cache/restore@v3
