@@ -44,7 +44,7 @@ runs:
           
       - name: Install dependencies
         shell: bash
-        run: cabal build --only-dependencies${{ inputs.ignore-tests != 'true' && ' --enable-tests --enable-benchmarks' || ''}}${{ inputs.ignore-haddock != 'true' && ' --enable-documentation' || ''}} -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
+        run: cabal build all --only-dependencies${{ inputs.ignore-tests != 'true' && ' --enable-tests --enable-benchmarks' || ''}}${{ inputs.ignore-haddock != 'true' && ' --enable-documentation' || ''}} -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
 
       - name: Save dependencies cache
         uses: actions/cache/save@v3
