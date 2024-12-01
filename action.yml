@@ -1,17 +1,22 @@
 name: build-and-test-cabal-package
-description:
+description: Action for building and testing Haskell packages
 
 inputs:
   ghc:
+    description: Version of GHC
     default: latest
   ghc-options:
+    description: Options to pass to the GHC compiler
     default:
       -Werror -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wredundant-constraints -Wunused-packages -Wno-name-shadowing -Wno-unused-matches -Wno-unused-do-bind -Wno-type-defaults
   ignore-haddock:
+    description: Whether to avoid generating haddock
     default: "false"
   ignore-cabal-check:
+    description: Whether to avoid cabal check
     default: "false"
   ignore-tests:
+    description: Whether to ignore tests
     default: "false"
 
 runs:
