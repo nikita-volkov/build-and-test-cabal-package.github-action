@@ -23,7 +23,7 @@ runs:
   using: composite
   steps:
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up GHC ${{ inputs.ghc }}
         id: setup
@@ -38,7 +38,7 @@ runs:
           cabal build all --dry-run
 
       - name: Restore cached dependencies
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         id: cache
         env:
           key: ${{ runner.os }}-ghc-${{ steps.setup.outputs.ghc-version }}-cabal-${{ steps.setup.outputs.cabal-version }}
@@ -52,7 +52,7 @@ runs:
         run: cabal build all --only-dependencies${{ inputs.ignore-tests != 'true' && ' --enable-tests --enable-benchmarks' || ''}}${{ inputs.ignore-haddock != 'true' && ' --enable-documentation' || ''}} -j +RTS -A128m -n2m -N -RTS --ghc-options="${{ inputs.ghc-options }}"
 
       - name: Save dependencies cache
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         if: ${{ steps.cache.outputs.cache-primary-key != steps.cache.outputs.cache-matched-key }}
         with:
           path: ${{ steps.setup.outputs.cabal-store }}
